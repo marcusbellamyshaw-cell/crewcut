@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "crewcut",
+  "description": "Lazy senior dev mode for AI agents that also refuses to guess: minimal code, surfaced assumptions, verifiable goals.",
+  "owner": {
+    "name": "Marcus Bellamy Shaw",
+    "url": "https://github.com/marcusbellamyshaw-cell"
+  },
+  "plugins": [
+    {
+      "name": "crewcut",
+      "description": "Forces the laziest solution that works and forbids silent guessing. YAGNI ladder + assumption gate + goal-driven verify loop.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}
