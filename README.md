@@ -77,13 +77,15 @@ ruleset.
 ## Benchmarks
 
 See [benchmarks/](./benchmarks) for methodology and results. Short
-version: on 3 deliberately underspecified coding tasks, agents without any
-of these skills loaded picked a silent interpretation and wrote code 3/3
-times; agents with `crewcut` loaded flagged the ambiguity in the same
-response 3/3 times, at a comparable or smaller diff size. This is a small,
-original benchmark measuring a different axis (assumption-surfacing rate)
-than ponytail's published LOC/token/cost benchmarks — it doesn't
-supersede them, it complements them.
+version, clean baseline (no other agent-shaping plugin active): on 3
+deliberately underspecified coding tasks, crewcut stated its assumption
+*before* writing code 3/3 times vs. 1/3 for baseline, named a specific
+alternate interpretation 2/3 times vs. 0/3, and produced 4x–30x less code
+per task. This is a small, original benchmark measuring a different axis
+(assumption-surfacing rate) than ponytail's published LOC/token/cost
+benchmarks — it doesn't supersede them, it complements them, and an
+earlier ponytail-contaminated run is kept in `benchmarks/results/` for
+comparison.
 
 ## Credits
 
