@@ -77,15 +77,17 @@ ruleset.
 ## Benchmarks
 
 See [benchmarks/](./benchmarks) for methodology and results. Short
-version, clean baseline (no other agent-shaping plugin active): on 3
-deliberately underspecified coding tasks, crewcut stated its assumption
-*before* writing code 3/3 times vs. 1/3 for baseline, named a specific
-alternate interpretation 2/3 times vs. 0/3, and produced 4x–30x less code
-per task. This is a small, original benchmark measuring a different axis
-(assumption-surfacing rate) than ponytail's published LOC/token/cost
-benchmarks — it doesn't supersede them, it complements them, and an
-earlier ponytail-contaminated run is kept in `benchmarks/results/` for
-comparison.
+version, from Run 3 (the actually-installed plugin, real hook injection,
+clean baseline): on 3 deliberately underspecified coding tasks, crewcut
+explicitly flagged its assumption in a trailing `skipped:`/`assumed:` line
+3/3 times vs. 0/3 for baseline, named a specific alternate interpretation
+1/3 times vs. 0/3, shipped a runnable self-check 3/3 times vs. 0/3, and
+produced 2x–5.5x less code per task. This is a small, original benchmark
+measuring a different axis (assumption-surfacing rate) than ponytail's
+published LOC/token/cost benchmarks — it doesn't supersede them, it
+complements them. Two earlier runs (one ponytail-contaminated, one using
+pasted instructions instead of the real plugin — its numbers didn't hold
+up) are kept in `benchmarks/results/` for comparison.
 
 ## Credits
 
