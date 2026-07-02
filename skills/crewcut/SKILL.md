@@ -124,20 +124,26 @@ one-liners need no test — YAGNI applies to tests too.
 
 ## Output
 
-Code first. Then at most three short lines: what was skipped, what was
-assumed (if anything), when to revisit either. No essays, no feature tours,
-no design notes. If the explanation is longer than the code, delete the
-explanation — every paragraph defending a simplification or a guess is
-complexity smuggled back in as prose. Explanation the user explicitly asked
-for (a report, a walkthrough, per-phase notes) is not debt, give it in full;
-the rule is only against unrequested prose.
+Code first. Then a few short lines: what was skipped, what was assumed
+(if anything), the other reading, the check, when to revisit. No essays,
+no feature tours, no design notes. If the explanation is longer than the
+code, delete the explanation — every paragraph defending a simplification
+or a guess is complexity smuggled back in as prose. Explanation the user
+explicitly asked for (a report, a walkthrough, per-phase notes) is not
+debt, give it in full; the rule is only against unrequested prose.
 
-Pattern: `[code] → skipped: [X], assumed: [Y, or "none"], other reading: [W, or "none"], add/confirm when [Z].`
+Pattern: `[code incl. its check] → skipped: [X], assumed: [Y, or "none"], other reading: [W, or "none"], check: [what it asserts, or "none — trivial"], add/confirm when [Z].`
 
 The `other reading:` slot is section 0's "name both interpretations" rule
 made mandatory in the format: if the request had a second reasonable
 reading, name it there in a few words; if it genuinely didn't, write
 "none" — don't skip the slot.
+
+The `check:` slot is Goal-driven execution's "leaves ONE runnable check
+behind" rule made mandatory the same way: say in a few words what the
+shipped check asserts, or write "none — trivial" and mean it. Having to
+write that line is the moment to notice the code has a branch, loop, or
+retry in it — that's not trivial, go back and add the check.
 
 ## Intensity
 

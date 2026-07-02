@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0
+
+- The output pattern gains a mandatory `check:` slot — naming what the
+  shipped self-check asserts, or explicitly writing "none — trivial".
+  Same evidence-driven change as 0.2.0's `other reading:` slot: the
+  first automated benchmark run (n=15) showed the self-check rule held
+  on complex tasks (4/5) but was mostly skipped on mid-complexity ones
+  (1/5 on a retry loop), while every format-level slot went 15/15.
+  Having to write the line is the nudge to notice a branch/loop/retry
+  isn't trivial.
+
 ## 0.2.0
 
 - The output pattern now has a mandatory `other reading:` slot — naming
