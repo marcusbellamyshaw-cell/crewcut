@@ -89,6 +89,9 @@ its self-check is excluded. Net read: crewcut is the only arm that
 reliably does all three things (flags assumptions, stays small, ships a
 self-check) — the specific value of combining ponytail's enforcement
 mechanism with karpathy-skills' principle rather than using either alone.
+The one axis crewcut was weak on in Run 4 (naming the alternate
+interpretation: 1/3) drove v0.2.0's mandatory `other reading:` output
+slot, and a verification re-run under the installed v0.2.0 went 3/3 on it.
 This is a small, original benchmark measuring a different axis
 (assumption-surfacing rate) than ponytail's published LOC/token/cost
 benchmarks — it doesn't supersede them, it complements them. Three earlier

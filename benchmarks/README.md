@@ -106,6 +106,14 @@ meant to be used rather than approximated.
 - **Alternate interpretation named: crewcut 1/3, karpathy-skills 1/3,
   ponytail 0/3, baseline 0/3.** Roughly tied between the two
   assumption-aware skills; not enough signal at n=3 to call a winner here.
+  **Follow-up (v0.2.0):** this finding — format-level rules go 3/3 while
+  prose-level ones go 1/3 — prompted making the alternate reading a
+  mandatory `other reading:` slot in the output pattern. A verification
+  re-run of the crewcut arm under the installed v0.2.0 went **3/3** on
+  this axis (shallow-vs-deep merge, network-errors-vs-any-failure, and a
+  single-`name`-field shape, each named concretely), with the
+  assumption-flagged and self-check axes holding at 3/3 and code size
+  unchanged. Same caveat as everything here: n=3, single run.
 - **Code size: ponytail is smallest at 4–20 lines** (its actual claimed
   strength — pure LOC minimization, no assumption-gate machinery to also
   emit), **crewcut is next at 14–24 lines function-only** (plus a
