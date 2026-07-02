@@ -167,6 +167,18 @@ headless sessions, deterministic graders, zero errors. Raw cells in
   earlier hand-scored subagent runs — rates are comparable within this
   table, but not precisely against the hand-scored ones.
 
+**v0.3.0 follow-up** (`agentic/runs/2026-07-02T03-25-19-080Z.json`, 15
+crewcut cells): moving the self-check rule into a mandatory `check:`
+output slot took that axis from 5/15 to **15/15** — including 5/5 on
+`retryFetch` (was 1/5) and 5/5 on `formatName`, where the models chose to
+write small real asserts rather than take the "none — trivial" opt-out.
+Cost: median code rose from 19 to 30 lines because every response now
+carries its check (still well under baseline's 47, which carries none).
+That's the format-beats-prose effect confirmed a third time: `other
+reading:` went 1/3 → 3/3 → 15/15 when it became a slot, `check:` went
+5/15 → 15/15, and every slot-level rule in this benchmark has hit 15/15
+while the same rules as prose never cleared 40%.
+
 ## Reproducing
 
 Automated (preferred): install crewcut (`/plugin marketplace add
