@@ -41,6 +41,11 @@ described below. `skills/crewcut-review/SKILL.md`'s bloat tags (`delete:`,
 `stdlib:`, `native:`, `yagni:`, `shrink:`) and scoring format are adapted
 from ponytail's `skills/ponytail-review/SKILL.md`.
 
+`benchmarks/agentic/run.js` is modeled on ponytail's `benchmarks/agentic/`
+harness (the `--selftest`-before-spend pattern, `--plugin-dir` arm
+isolation, deterministic graders), and its self-check grader's detection
+regex is adapted from ponytail's `benchmarks/behavior.js` "onecheck" probe.
+
 ### ponytail license (MIT)
 
 ```

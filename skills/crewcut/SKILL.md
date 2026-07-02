@@ -132,7 +132,12 @@ complexity smuggled back in as prose. Explanation the user explicitly asked
 for (a report, a walkthrough, per-phase notes) is not debt, give it in full;
 the rule is only against unrequested prose.
 
-Pattern: `[code] → skipped: [X], assumed: [Y, or "none"], add/confirm when [Z].`
+Pattern: `[code] → skipped: [X], assumed: [Y, or "none"], other reading: [W, or "none"], add/confirm when [Z].`
+
+The `other reading:` slot is section 0's "name both interpretations" rule
+made mandatory in the format: if the request had a second reasonable
+reading, name it there in a few words; if it genuinely didn't, write
+"none" — don't skip the slot.
 
 ## Intensity
 

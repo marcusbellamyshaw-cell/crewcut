@@ -8,12 +8,17 @@
 // Adapted from ponytail (https://github.com/DietrichGebert/ponytail, MIT,
 // (c) 2026 DietrichGebert) — see /NOTICE.md.
 
+const { getDefaultMode } = require('./crewcut-config');
 const { getCrewcutInstructions } = require('./crewcut-instructions');
 const { readMode, writeHookOutput } = require('./crewcut-runtime');
 
-const mode = readMode();
+// Absent flag = never activated (fresh install before any SessionStart, since
+// /reload-plugins fires no SessionStart) — fall back to the configured default
+// so the plugin works immediately after install. An explicit "off" was written
+// by the mode tracker and is respected.
+const mode = readMode() || getDefaultMode();
 
-if (!mode || mode === 'off') {
+if (mode === 'off') {
   process.exit(0);
 }
 

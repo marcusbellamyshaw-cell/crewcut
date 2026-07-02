@@ -17,11 +17,9 @@ function setMode(mode) {
   fs.writeFileSync(statePath, mode);
 }
 
-function clearMode() {
-  try { fs.unlinkSync(statePath); } catch (e) {}
-}
-
-// Live mode written by activate/mode-tracker. Absent flag = crewcut off.
+// Live mode written by activate/mode-tracker. Absent flag = never activated
+// (fresh install before any SessionStart fires); consumers fall back to the
+// configured default. An explicit off is persisted as the string 'off'.
 function readMode() {
   try {
     return fs.readFileSync(statePath, 'utf8').trim() || null;
@@ -42,7 +40,6 @@ function writeHookOutput(event, mode, context = '') {
 }
 
 module.exports = {
-  clearMode,
   readMode,
   setMode,
   writeHookOutput,

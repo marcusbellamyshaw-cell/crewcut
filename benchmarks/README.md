@@ -127,19 +127,31 @@ meant to be used rather than approximated.
   benchmark (12 total responses across 4 arms).** Enough to show real,
   distinguishable differences between all four arms on multiple axes, not
   enough to claim a stable percentage for any of them. An automated
-  harness modeled on ponytail's `benchmarks/agentic/` (credited) is the
-  natural next step and isn't built here yet.
+  harness now exists in [agentic/](./agentic/) (modeled on ponytail's
+  `benchmarks/agentic/`, credited in NOTICE.md) for multi-run versions of
+  this table; the results above predate it and were scored by hand.
 
 ## Reproducing
 
-Install crewcut (`/plugin marketplace add marcusbellamyshaw-cell/crewcut
-&& /plugin install crewcut@crewcut`) and, for the ponytail arm, ponytail
-(`/plugin marketplace add DietrichGebert/ponytail && /plugin install
-ponytail@ponytail`). Run the same 3 tasks (or your own) through an
-isolated subagent under each arm: baseline (all plugins off), crewcut
+Automated (preferred): install crewcut (`/plugin marketplace add
+marcusbellamyshaw-cell/crewcut && /plugin install crewcut@crewcut`) and,
+for the ponytail arm, ponytail (`/plugin marketplace add
+DietrichGebert/ponytail && /plugin install ponytail@ponytail`), then:
+
+```
+node benchmarks/agentic/run.js --selftest              # prove graders, no spend
+node benchmarks/agentic/run.js --runs 3                # baseline vs crewcut
+node benchmarks/agentic/run.js --runs 3 --arms baseline,crewcut,ponytail
+```
+
+Each cell runs headless (`claude -p`) with global plugins excluded and
+exactly one plugin loaded via `--plugin-dir`, then scores the four axes
+deterministically. The `altReading` grader is a heuristic — spot-check its
+sub-threshold cells by hand rather than trusting a zero.
+
+Manual (what produced the table above): run the same 3 tasks through an
+isolated subagent under each arm — baseline (all plugins off), crewcut
 (`/crewcut full`, ponytail off), ponytail (`/ponytail full`, crewcut off),
 karpathy-skills (both plugins off, paste its `CLAUDE.md` from
 [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
-into the prompt). Score for code size, whether the assumption is
-explicitly flagged, alternate-interpretation naming, and self-check
-presence as above. PRs adding an automated harness are welcome.
+into the prompt) — and score by hand as above.

@@ -66,7 +66,7 @@ function getFallbackInstructions(mode) {
     'Ship the lazy version and flag the assumption in the same response — never stall on either. ' +
     'Mark intentional simplifications with a `crewcut:` comment naming the ceiling and the upgrade path.\n\n' +
     '## Output\n\n' +
-    'Code first. Then at most three short lines: what was skipped, what was assumed, when to revisit either. ' +
+    'Code first. Then at most three short lines: what was skipped, what was assumed, the other reasonable reading of the request (or "none"), when to revisit. ' +
     'Explanation the user explicitly asked for is not debt, give it in full.\n\n' +
     '## When NOT to be lazy or assume\n\n' +
     'Never simplify away: understanding the problem, input validation at trust boundaries, error handling that prevents data loss, security, accessibility, hardware calibration, anything explicitly requested. ' +

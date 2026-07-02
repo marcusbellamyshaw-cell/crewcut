@@ -6,7 +6,7 @@
 // (c) 2026 DietrichGebert) — see /NOTICE.md.
 
 const { getDefaultMode, isDeactivationCommand } = require('./crewcut-config');
-const { clearMode, setMode, writeHookOutput } = require('./crewcut-runtime');
+const { setMode, writeHookOutput } = require('./crewcut-runtime');
 
 let input = '';
 process.stdin.on('data', chunk => { input += chunk; });
@@ -42,13 +42,16 @@ process.stdin.on('end', () => {
           'CREWCUT MODE CHANGED — level: ' + mode,
         );
       } else if (mode === 'off') {
-        clearMode();
+        // Write 'off' rather than deleting the flag: an absent flag now means
+        // "never activated" (fresh install) and falls back to the default, so
+        // an explicit off must be persisted to be distinguishable from it.
+        setMode('off');
         writeHookOutput('UserPromptSubmit', 'off', 'CREWCUT MODE OFF');
       }
     }
 
     if (isDeactivationCommand(prompt)) {
-      clearMode();
+      setMode('off');
       writeHookOutput('UserPromptSubmit', 'off', 'CREWCUT MODE OFF');
     }
   } catch (e) {
