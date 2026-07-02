@@ -139,6 +139,34 @@ meant to be used rather than approximated.
   `benchmarks/agentic/`, credited in NOTICE.md) for multi-run versions of
   this table; the results above predate it and were scored by hand.
 
+## First automated run (v0.2.0, n=15 per arm)
+
+`node benchmarks/agentic/run.js --runs 5` — 5 runs x 2 arms x 3 tasks, 30
+headless sessions, deterministic graders, zero errors. Raw cells in
+`agentic/runs/2026-07-02T03-14-44-617Z.json`.
+
+| Axis | baseline | crewcut (v0.2.0) |
+|---|---|---|
+| assumption flagged | 0/15 | **15/15** |
+| alternate reading named | 1/15 | **15/15** |
+| self-check shipped | 0/15 | 5/15 |
+| median code lines | 47 | **19** |
+
+- The two assumption axes are now clean sweeps at n=15 — the v0.2.0
+  `other reading:` slot holds at scale, not just in the n=3 hand runs.
+- Self-check at 5/15 looks like a regression vs. the hand runs' 3/3 until
+  you split it by task: 4/5 on `mergeUserPrefs` (the most complex task),
+  1/5 on `retryFetch`, 0/5 on `formatName` — whose crewcut solutions were
+  5–9-line fallback chains the skill itself exempts ("trivial one-liners
+  need no test; YAGNI applies to tests too"). The `formatName` zeros are
+  the rule working; the `retryFetch` misses are genuine (a retry loop is
+  non-trivial by the skill's own definition) and are the next candidate
+  for the format-beats-prose treatment.
+- One confound to disclose: these headless sessions used the account's
+  current default model, which differs from the model that produced the
+  earlier hand-scored subagent runs — rates are comparable within this
+  table, but not precisely against the hand-scored ones.
+
 ## Reproducing
 
 Automated (preferred): install crewcut (`/plugin marketplace add
