@@ -77,17 +77,24 @@ ruleset.
 ## Benchmarks
 
 See [benchmarks/](./benchmarks) for methodology and results. Short
-version, from Run 3 (the actually-installed plugin, real hook injection,
-clean baseline): on 3 deliberately underspecified coding tasks, crewcut
-explicitly flagged its assumption in a trailing `skipped:`/`assumed:` line
-3/3 times vs. 0/3 for baseline, named a specific alternate interpretation
-1/3 times vs. 0/3, shipped a runnable self-check 3/3 times vs. 0/3, and
-produced 2x–5.5x less code per task. This is a small, original benchmark
-measuring a different axis (assumption-surfacing rate) than ponytail's
-published LOC/token/cost benchmarks — it doesn't supersede them, it
-complements them. Two earlier runs (one ponytail-contaminated, one using
-pasted instructions instead of the real plugin — its numbers didn't hold
-up) are kept in `benchmarks/results/` for comparison.
+version, from Run 4 (real crewcut, real ponytail, real karpathy-skills
+`CLAUDE.md` text, clean baseline — a genuine 4-way head-to-head, not just
+crewcut vs. nothing): on 3 deliberately underspecified coding tasks,
+crewcut explicitly flagged its assumption 3/3 vs. karpathy-skills 2/3,
+ponytail 0/3, and baseline 0/3; crewcut shipped a runnable self-check 3/3
+vs. ponytail 2/3, karpathy-skills 0/3 (despite karpathy-skills' own text
+explicitly asking for one), and baseline 0/3; ponytail produced the
+smallest raw code (its actual strength), with crewcut close behind once
+its self-check is excluded. Net read: crewcut is the only arm that
+reliably does all three things (flags assumptions, stays small, ships a
+self-check) — the specific value of combining ponytail's enforcement
+mechanism with karpathy-skills' principle rather than using either alone.
+This is a small, original benchmark measuring a different axis
+(assumption-surfacing rate) than ponytail's published LOC/token/cost
+benchmarks — it doesn't supersede them, it complements them. Three earlier
+runs (one ponytail-contaminated, one using pasted crewcut instructions
+instead of the real plugin, one crewcut-vs-baseline only) are kept in
+`benchmarks/results/` for comparison.
 
 ## Credits
 

@@ -14,96 +14,132 @@ against a clean baseline.
 ## Methodology
 
 3 deliberately underspecified coding tasks (object shape and edge-case
-behavior both left unstated), each run twice via an isolated Claude Code
+behavior both left unstated), each run through an isolated Claude Code
 subagent with no file/codebase access — respond with code only, no other
-context:
+context. Four arms, each tested against its **real mechanism**, not a
+proxy:
 
-- **baseline**: task prompt only, crewcut mode off.
-- **crewcut**: identical task prompt, crewcut mode `full` — instructions
-  injected by the actually-installed plugin's real `SubagentStart` hook
-  (not pasted instruction text; see "Three runs" below for why that
-  distinction turned out to matter).
+- **baseline**: task prompt only, no plugin active.
+- **crewcut**: identical prompt, crewcut mode `full` — instructions
+  injected by the actually-installed plugin's real `SubagentStart` hook.
+- **ponytail**: identical prompt, [ponytail](https://github.com/DietrichGebert/ponytail)
+  mode `full` — same real-hook-injection mechanism (crewcut's is adapted
+  from it), crewcut disabled for this arm.
+- **karpathy-skills**: identical prompt with [andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)'
+  actual `CLAUDE.md` text pasted in as instructions — this project has no
+  hook/plugin mechanism of its own, so pasting its guidelines into context
+  *is* the realistic way it gets used (its own README says to merge it
+  into project instructions); no plugins active for this arm.
 
-Scored by hand on three axes: **code size** (lines), **assumption
-surfaced** (explicitly flagged, in the `skipped:`/`assumed:` format the
-skill specifies / only in informal prose / not stated at all), and
-**alternate interpretation named** (did the response acknowledge a second
-reasonable reading of the request, not just its own pick).
+Scored by hand on four axes: **code size** (lines), **assumption surfaced**
+(explicitly flagged as an assumption / only in informal unmarked prose /
+not stated at all), **alternate interpretation named** (did the response
+name a second reasonable reading, not just pick one), and **self-check
+shipped** (a runnable test/assert, unprompted).
 
-## Three runs, two disclosed confounds
+## Four runs
 
-**Run 1** happened in a session with
-[ponytail](https://github.com/DietrichGebert/ponytail) active session-wide,
-whose SubagentStart hook propagated its ruleset into the "baseline" arm
-too, muting the size difference. Archived in
+**Run 1** happened in a session with ponytail active session-wide
+ambiently, contaminating the baseline arm. Archived in
 [results/run-1-ponytail-ambient.md](./results/run-1-ponytail-ambient.md).
 
-**Run 2** used a clean baseline (ponytail uninstalled) but simulated the
-crewcut arm by pasting the skill's instructions into the subagent prompt,
-since the plugin wasn't installable yet at the time. Archived in
-[results/run-2-pasted-instructions.md](./results/run-2-pasted-instructions.md) —
-its "assumption before code" and "4x–30x" headline numbers didn't hold up
-once tested against the real thing (see below).
+**Run 2** used a clean baseline but simulated the crewcut arm with pasted
+instruction text, since the plugin wasn't installable yet. Its headline
+numbers didn't hold up. Archived in
+[results/run-2-pasted-instructions.md](./results/run-2-pasted-instructions.md).
 
-**Run 3 (current, below) uses the actually-installed plugin** —
-`/plugin install crewcut@crewcut`, real marketplace source, real
-`SubagentStart` hook injection — the exact mechanism a real user gets, not
-a proxy for it.
+**Run 3** was the first to use the real installed crewcut plugin, but only
+compared it against baseline. Archived in
+[results/run-3-crewcut-vs-baseline.md](./results/run-3-crewcut-vs-baseline.md) —
+its data is reused unchanged below.
 
-## Results (Run 3 — real installed plugin, clean baseline)
+**Run 4 (current, below)** adds real ponytail and real karpathy-skills
+arms for a genuine 4-way comparison, each tested the way it's actually
+meant to be used rather than approximated.
 
-| Task | Arm | Code size | Assumption surfaced? | Alt. interpretation named? |
-|---|---|---|---|---|
-| `mergeUserPrefs(defaults, overrides)` | baseline | ~55 lines (JSDoc, deep-merge, `isPlainObject` helper) | No — only informal "design choices" prose after the code | No — deep-merge picked and justified, shallow-merge never named as a live option |
-| `mergeUserPrefs(defaults, overrides)` | crewcut | ~24 lines + 20-line self-check | **Yes** — trailing `skipped:`/`assumed:` line, code-first per the skill's `## Output` spec | No — states the assumed shape, doesn't name a second concrete reading |
-| `retryFetch(url)` | baseline | ~50 lines (AbortController timeout, backoff+jitter, JSDoc, `retryOn` predicate) | No — design notes after the code, nothing flagged as an assumption | No |
-| `retryFetch(url)` | crewcut | 14 lines + 12-line self-check | **Yes** — trailing `skipped:`/`assumed:` line | **Yes** — named retry-on-network-error-only vs. retry-on-any-failure as the two readings |
-| `formatName(user)` | baseline | ~40 lines (5-tier fallback chain, whitespace cleanup, JSDoc) | No — caveat about differing shapes appears only after the code | No |
-| `formatName(user)` | crewcut | 18 lines + 7-line self-check | **Yes** — trailing `skipped:`/`assumed:` line | No — states the assumed shape, doesn't name a second concrete reading |
+## Results (Run 4 — 4-way, real mechanisms, clean isolation between arms)
+
+| Task | Arm | Code size | Assumption surfaced? | Alt. interpretation named? | Self-check shipped? |
+|---|---|---|---|---|---|
+| `mergeUserPrefs` | baseline | ~55 lines | No — informal prose only | No | No |
+| `mergeUserPrefs` | crewcut | ~24 lines + 20-line self-check | **Yes** — trailing `skipped:`/`assumed:` line | No | **Yes** |
+| `mergeUserPrefs` | ponytail | ~20 lines + 8-line self-check | No — trailing `→ skipped:` line documents scope, not a flagged guess | No | **Yes** |
+| `mergeUserPrefs` | karpathy-skills | ~25 lines | **Yes** — 6-bullet "Assumptions:" list **before** the code | **Yes** — named shallow-merge/array-concat/TS as alternatives | No |
+| `retryFetch` | baseline | ~50 lines | No | No | No |
+| `retryFetch` | crewcut | 14 lines + 12-line self-check | **Yes** — trailing `skipped:`/`assumed:` line | **Yes** — network-error-only vs. any-failure | **Yes** |
+| `retryFetch` | ponytail | 9 lines + 20-line self-check | No — trailing `→ skipped:` line, not flagged as a guess | No | **Yes** |
+| `retryFetch` | karpathy-skills | ~30 lines | No — informal "Notes" after code | No | No |
+| `formatName` | baseline | ~40 lines | No | No | No |
+| `formatName` | crewcut | 18 lines + 7-line self-check | **Yes** — trailing `skipped:`/`assumed:` line | No | **Yes** |
+| `formatName` | ponytail | 4 lines | No — trailing `→ skipped:` line, not flagged as a guess | No | No |
+| `formatName` | karpathy-skills | ~20 lines | **Yes** — 4-bullet "Assumptions:" list **before** the code | No — invites correction, doesn't name a concrete second reading | No |
 
 ## Reading this honestly
 
-- **The "assumption stated *before* code" claim from Run 2 was wrong.**
-  Under the real plugin, crewcut was 3/3 **consistent** — but consistently
-  *code first, then* a trailing `skipped:`/`assumed:` line, exactly
-  matching the skill's own `## Output` section ("Code first. Then at most
-  three short lines..."). There's no contradiction in the skill text; Run
-  2's write-up mis-described what "surfacing an assumption" looks like in
-  practice. The corrected, still-real finding: **3/3 crewcut runs
-  explicitly flagged their assumption in the skill's specified format;
-  0/3 baseline runs flagged anything as an assumption** (baseline explains
-  its choices, but never marks them as guesses).
-- **1/3 crewcut runs named a concrete alternate interpretation; 0/3
-  baseline runs did** — weaker than Run 2's reported 2/3, and worth taking
-  at face value: naming a second reading isn't guaranteed every time, even
-  with the assumption gate active. n=3 per condition is small; don't read
-  a single run's ratio as a fixed rate.
-- **New, unplanned finding: 3/3 crewcut runs shipped a runnable self-check
-  (assert-based `demo()` or `console.assert` calls); 0/3 baseline runs
-  did.** This tracks directly to the skill's "Goal-driven execution" rule
-  ("non-trivial logic... leaves ONE runnable check behind") and reproduced
-  cleanly across all three tasks — a more consistent effect in this run
-  than either of the other two scored axes.
-- **Code size dropped 2x–5.5x**, not the 4x–30x Run 2 reported (~55→~24,
-  ~50→14, ~40→18 lines). Real crewcut output spends some of its size
-  budget on the self-check the pasted-instructions version didn't reliably
-  produce, and did a more complete implementation (e.g. an actual
-  deep-merge, not a 1-line shallow spread) — both genuine behavior, just
-  not as dramatic a number as the earlier proxy run suggested.
+- **Assumption surfaced (explicitly flagged, not just explained): crewcut
+  3/3, karpathy-skills 2/3, ponytail 0/3, baseline 0/3.** This is the axis
+  crewcut was built to win and it does, clearly — but karpathy-skills
+  (just pasted `CLAUDE.md` text, no enforcement mechanism) got surprisingly
+  close, missing only on the task where the model happened to skip its own
+  "think before coding" step. Ponytail explicitly doesn't try to do this
+  (per its own design — YAGNI ladder, not an assumption gate) and its 0/3
+  here isn't a failure, it's out of scope for what ponytail claims to do.
+- **Placement confirms each skill's own spec, when the assumption is
+  surfaced at all.** crewcut: 3/3 *after* code, trailing line — matches
+  its `## Output` section. karpathy-skills: 2/2 (of the ones that surfaced
+  anything) *before* code, as a list — matches its "Think Before Coding"
+  principle's literal instruction to state assumptions "before
+  implementing." Neither skill is inconsistent with itself; they just
+  specify opposite placement, and the models followed each specification
+  when they followed it at all.
+- **Self-check shipped: crewcut 3/3, ponytail 2/3, karpathy-skills 0/3,
+  baseline 0/3.** The most surprising result of this run. Karpathy-skills'
+  own principle #4 ("Goal-Driven Execution") explicitly gives "write a
+  test, then make it pass" as the model example — and still 0/3 subagents
+  produced one, unprompted. Ponytail doesn't name this as an explicit rule
+  the way crewcut does, but got 2/3 anyway (its ladder's "verify" framing
+  appears to trigger it as a side effect). This is real evidence for the
+  comparison table's "no persistence/enforcement mechanism" claim about
+  karpathy-skills: stating a principle in pasted text doesn't reliably
+  produce the behavior, even when the principle is explicit and gives a
+  worked example.
+- **Alternate interpretation named: crewcut 1/3, karpathy-skills 1/3,
+  ponytail 0/3, baseline 0/3.** Roughly tied between the two
+  assumption-aware skills; not enough signal at n=3 to call a winner here.
+- **Code size: ponytail is smallest at 4–20 lines** (its actual claimed
+  strength — pure LOC minimization, no assumption-gate machinery to also
+  emit), **crewcut is next at 14–24 lines function-only** (plus a
+  self-check ponytail only sometimes includes), **karpathy-skills and
+  baseline are both in the 20–55 line range** with karpathy-skills
+  consistently somewhat smaller than baseline (its "Simplicity First"
+  principle does have some effect, just weaker than either hook-enforced
+  skill's).
+- **Net read:** crewcut is the only arm that reliably does *both* things
+  (flags assumptions AND stays small AND ships a self-check) — which is
+  the actual point of combining ponytail's mechanism with
+  karpathy-skills' principle rather than using either alone. Ponytail
+  alone wins on raw size. Karpathy-skills alone can match crewcut's
+  assumption-flagging on a good task but is inconsistent (misses 1/3) and
+  never produces a self-check despite asking for one in its own text.
+  Baseline does none of the three things any of the other three arms were
+  built to do.
 - **This is still a 3-task, single-run-per-condition, hand-scored
-  benchmark.** Enough to show the effect is real and to correct the
-  specific claims Run 2 got wrong, not enough to claim a stable
-  percentage. An automated harness modeled on ponytail's
-  `benchmarks/agentic/` (credited) is the natural next step and isn't
-  built here yet.
+  benchmark (12 total responses across 4 arms).** Enough to show real,
+  distinguishable differences between all four arms on multiple axes, not
+  enough to claim a stable percentage for any of them. An automated
+  harness modeled on ponytail's `benchmarks/agentic/` (credited) is the
+  natural next step and isn't built here yet.
 
 ## Reproducing
 
-Install the real plugin (`/plugin marketplace add
-marcusbellamyshaw-cell/crewcut && /plugin install crewcut@crewcut`), then
-run the same 3 tasks (or your own) through an isolated subagent twice: once
-with crewcut mode off (`/crewcut off`), once with it on (`/crewcut full`).
-Score for code size, whether the assumption is explicitly flagged (not just
-explained), and alternate-interpretation naming as above. Run with no other
-agent-shaping plugin active for a clean baseline. PRs adding an automated
-harness are welcome.
+Install crewcut (`/plugin marketplace add marcusbellamyshaw-cell/crewcut
+&& /plugin install crewcut@crewcut`) and, for the ponytail arm, ponytail
+(`/plugin marketplace add DietrichGebert/ponytail && /plugin install
+ponytail@ponytail`). Run the same 3 tasks (or your own) through an
+isolated subagent under each arm: baseline (all plugins off), crewcut
+(`/crewcut full`, ponytail off), ponytail (`/ponytail full`, crewcut off),
+karpathy-skills (both plugins off, paste its `CLAUDE.md` from
+[multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)
+into the prompt). Score for code size, whether the assumption is
+explicitly flagged, alternate-interpretation naming, and self-check
+presence as above. PRs adding an automated harness are welcome.
