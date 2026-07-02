@@ -89,10 +89,17 @@ its self-check is excluded. Net read: crewcut is the only arm that
 reliably does all three things (flags assumptions, stays small, ships a
 self-check) — the specific value of combining ponytail's enforcement
 mechanism with karpathy-skills' principle rather than using either alone.
-The one axis crewcut was weak on in Run 4 (naming the alternate
-interpretation: 1/3) drove v0.2.0's mandatory `other reading:` output
-slot, and a verification re-run under the installed v0.2.0 went 3/3 on it.
-This is a small, original benchmark measuring a different axis
+The two axes crewcut was inconsistent on in Run 4 drove the next two
+releases, each verified by an automated 15-cell run against the installed
+plugin (harness in `benchmarks/agentic/`): v0.2.0's mandatory
+`other reading:` output slot took alternate-interpretation naming from
+1/3 to 15/15, and v0.3.0's mandatory `check:` slot took self-checks from
+5/15 to 15/15. Current automated numbers, crewcut v0.3.0 vs. baseline
+(n=15 per arm): assumption flagged 15/15 vs. 0/15, alternate reading
+15/15 vs. 1/15, self-check 15/15 vs. 0/15, median 30 vs. 47 code lines.
+The recurring meta-finding: rules expressed as mandatory output-format
+slots hit 100% in this benchmark, while the same rules as prose never
+cleared 40%. This is a small, original benchmark measuring a different axis
 (assumption-surfacing rate) than ponytail's published LOC/token/cost
 benchmarks — it doesn't supersede them, it complements them. Three earlier
 runs (one ponytail-contaminated, one using pasted crewcut instructions
